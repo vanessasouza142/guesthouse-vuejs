@@ -6,11 +6,42 @@
   <title>Pousadaria</title>
 </head>
 <body>
-  <div id="app">
+  <div id="guesthouse-app">
+    <h1>Pousadaria</h1>
+
+    <input type="text" v-model="searchText" placeholder="Pesquisar Pousada">
+    <button v-on:click="getData">Lista de pousadas</button>
+
+    <div v-if="listResult.length <= 0">
+      Nenhum contato encontrado.
+    </div>
+    
+    <ul>
+      <li v-for="item, index in listResult">
+        <p>{{  item.brand_name }}</p>
+        <p>Cidade: {{  item.city }}</p>
+        <button v-on:click="getDetails(item.id)">Detalhes</button>
+        
+        <div v-if="selectedGuesthouse && selectedGuesthouse.id === item.id">
+          <p>Nota Média: {{ selectedGuesthouse.average_score }}</p>
+          <p>Telefone: {{ selectedGuesthouse.phone_number }}</p>
+          <p>E-mail: {{ selectedGuesthouse.email }}</p>
+          <p>Endereço: {{ selectedGuesthouse.address }}, {{ selectedGuesthouse.neighborhood }} 
+            {{ selectedGuesthouse.city }} - {{ selectedGuesthouse.state }} CEP: {{ selectedGuesthouse.postal_code }}</p>
+          <p>Descrição: {{ selectedGuesthouse.description }}</p>
+          <p>Métodos de Pagamento: {{ selectedGuesthouse.payment_method }}</p>
+          <p>Políticas de Uso: {{ selectedGuesthouse.usage_policy }}</p>
+          <p>Horário de Check-in: {{ selectedGuesthouse.check_in }}</p>
+          <p>Horário de Check-out: {{ selectedGuesthouse.check_out }}</p>
+          <button v-on:click="getRooms(item.id)">Quartos</button>
+        </div>
+        <hr>
+      </li>      
+    </ul>
 
   </div>
   
-  <script src="main.js"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
