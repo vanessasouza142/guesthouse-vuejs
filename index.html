@@ -10,17 +10,17 @@
     <h1>Pousadaria</h1>
 
     <input type="text" v-model="searchText" placeholder="Pesquisar Pousada">
-    <button v-on:click="getData">Lista de pousadas</button>
+    <button @click="getData">Lista de pousadas</button>
 
     <div v-if="listResult.length <= 0">
       Nenhum contato encontrado.
     </div>
     
     <ul>
-      <li v-for="item, index in listResult">
-        <p>{{  item.brand_name }}</p>
+      <li v-for="item in listResult" :key="item.id">
+        <p><strong>{{  item.brand_name }}</strong></p>
         <p>Cidade: {{  item.city }}</p>
-        <button v-on:click="getDetails(item.id)">Detalhes</button>
+        <button @click="getDetails(item.id)">Detalhes</button>
         
         <div v-if="selectedGuesthouse && selectedGuesthouse.id === item.id">
           <p>Nota Média: {{ selectedGuesthouse.average_score }}</p>
@@ -33,12 +33,50 @@
           <p>Políticas de Uso: {{ selectedGuesthouse.usage_policy }}</p>
           <p>Horário de Check-in: {{ selectedGuesthouse.check_in }}</p>
           <p>Horário de Check-out: {{ selectedGuesthouse.check_out }}</p>
-          <button v-on:click="getRooms(item.id)">Quartos</button>
+          <button @click="getRooms(item.id)">Quartos</button>
+
+          <ul>
+            <li v-for="room in listRooms" :key="room.id">
+              <div v-if="room.guesthouseId === selectedGuesthouse.id">
+                <p><strong>{{ room.name }}</strong></p>
+                <p>Descrição: {{ room.description }}</p>
+                <p>Área: {{ room.area }} m²</p>
+                <p>Quantidade max. de hóspedes: {{ room.max_guest }}</p>
+                <p>Valor da diária: {{ room.default_price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
+
+                <p><strong>Consultar Disponibilidade:</strong></p>
+                <div>
+                  <form @submit.prevent="checkAvailability(room)">
+                    <div>
+                      <label for="checkInDate">Data de entrada:</label>
+                      <input type="date" v-model="room.checkInDate" required>
+                    </div>
+                    <div>
+                      <label for="checkOutDate">Data de saída:</label>
+                      <input type="date" v-model="room.checkOutDate" required>
+                    </div>
+                    <div>
+                      <label for="guestsNumber">Número de Hóspedes:</label>
+                      <input type="number" v-model="room.guestsNumber" required>
+                    </div>                    
+                    <button type="submit">Consultar</button>
+                  </form>
+                
+                  <div v-if="room.totalPrice !== null">
+                    <p>Total das Diárias: {{ room.totalPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
+                  </div>
+                  <div v-else>
+                    <p>{{ room.availabilityMessage }}</p>
+                  </div>
+
+                </div>
+              </div>
+            </li>
+          </ul>
         </div>
         <hr>
       </li>      
     </ul>
-
   </div>
   
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
